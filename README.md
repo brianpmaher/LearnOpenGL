@@ -91,4 +91,4 @@ This project was developed and tested to work on Windows. It likely doesn't work
   - When all rendering commands are finished, we **swap** the back buffer to the front buffer.
 - We can clear the color buffer using `glClear(bufferBits)` and set the clear color with `glClearColor(r, g, b, a)`
 
-<video src="./Asset/ClearColorWheel.mp4" autoplay loop></video>
+<video src="./Asset/ClearColorWheel.mp4" controls></video>
