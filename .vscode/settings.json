@@ -1,0 +1,7 @@
+{
+    "cmake.buildDirectory": "${workspaceFolder}/Build",
+    "editor.formatOnSave": true,
+    "[cmake]": {
+        "editor.insertSpaces": false
+    },
+}

@@ -1,0 +1,7 @@
+BasedOnStyle: Microsoft
+UseTab: AlignWithSpaces
+IndentWidth: 4
+AccessModifierOffset: -4
+PointerAlignment: Left
+AlignAfterOpenBracket: AlwaysBreak
+AllowShortFunctionsOnASingleLine: InlineOnly
