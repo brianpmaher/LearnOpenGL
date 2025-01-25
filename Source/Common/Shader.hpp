@@ -29,6 +29,11 @@ public:
 		glUniform1f(glGetUniformLocation(id, name), value);
 	}
 
+	inline void SetUniform(const char* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w) const
+	{
+		glUniform4f(glGetUniformLocation(id, name), x, y, z, w);
+	}
+
 	inline GLuint GetID()
 	{
 		return id;
