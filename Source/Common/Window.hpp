@@ -9,19 +9,26 @@ public:
 
 	~Window();
 
-	inline bool ShouldClose()
+	inline bool ShouldClose() const
 	{
 		return glfwWindowShouldClose(window);
 	}
 
-	inline void PollEvents()
+	inline void PollEvents() const
 	{
 		glfwPollEvents();
 	}
 
-	inline void SwapBuffers()
+	inline void SwapBuffers() const
 	{
 		glfwSwapBuffers(window);
+	}
+
+	inline float GetAspect() const
+	{
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+		return (float)width / (float)height;
 	}
 
 private:

@@ -65,3 +65,7 @@ target_link_libraries(${PROJECT_NAME}_Textures PRIVATE ${COMMON_LIB})
 # 8. Transformations
 add_executable(${PROJECT_NAME}_Transformations ${EXAMPLE_PATH}/8_Transformations/Main.cpp)
 target_link_libraries(${PROJECT_NAME}_Transformations PRIVATE ${COMMON_LIB})
+
+# 9. Coordinate Systems
+add_executable(${PROJECT_NAME}_CoordinateSystems ${EXAMPLE_PATH}/9_CoordinateSystems/Main.cpp)
+target_link_libraries(${PROJECT_NAME}_CoordinateSystems PRIVATE ${COMMON_LIB})
