@@ -1,43 +1,14 @@
+#include "Common/Shader.hpp"
+#include "Common/Window.hpp"
+
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
 #include <iostream>
 
-struct AppState
-{
-	bool wireframeMode;
-};
-
-static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
-static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
 int main()
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Shaders", nullptr, nullptr);
-	if (window == nullptr)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return EXIT_FAILURE;
-	}
-	glfwMakeContextCurrent(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	auto appState = AppState();
-
-	glfwSetWindowUserPointer(window, &appState);
-	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
-	glfwSetKeyCallback(window, KeyCallback);
+	auto window = Window(800, 600, "Shaders");
 
 	// Print number of attributes
 	{
@@ -158,13 +129,11 @@ int main()
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-	while (!glfwWindowShouldClose(window))
+	while (!window.ShouldClose())
 	{
-		glfwPollEvents();
+		window.PollEvents();
 
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		glPolygonMode(GL_FRONT_AND_BACK, appState.wireframeMode ? GL_LINE : GL_FILL);
 
 		glUseProgram(shaderProgram);
 
@@ -181,33 +150,13 @@ int main()
 
 		glBindVertexArray(GL_NONE);
 
-		glfwSwapBuffers(window);
+		window.SwapBuffers();
 	}
 
 	glDeleteBuffers(1, &ebo);
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(shaderProgram);
-	glfwTerminate();
 
 	return EXIT_SUCCESS;
-}
-
-static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
-
-static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	AppState& appState = *static_cast<AppState*>(glfwGetWindowUserPointer(window));
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(window, true);
-	}
-	else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-	{
-		appState.wireframeMode = !appState.wireframeMode;
-	}
 }
