@@ -113,7 +113,8 @@ int main()
 	auto projection = glm::mat4(1.0f);
 	constexpr float near = 0.1f;
 	constexpr float far = 100.0f;
-	projection = glm::perspective(glm::radians(45.0f), window.GetAspect(), near, far);
+	float fovy = 45.0f;
+	projection = glm::perspective(glm::radians(fovy), window.GetAspect(), near, far);
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -182,7 +183,7 @@ int main()
 
 				if (glm::length(moveDirection) > 0.0f)
 				{
-					constexpr float moveSpeed = 2.0f;
+					constexpr float moveSpeed = 5.0f;
 					cameraPosition += glm::normalize(moveDirection) * moveSpeed * deltaTime;
 				}
 			}
@@ -207,10 +208,16 @@ int main()
 				cameraFront = glm::normalize(direction);
 				cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
 			}
+
+			// Update scroll zoom
+			{
+				fovy -= window.GetScrollMovement().y;
+				fovy = glm::clamp(fovy, 5.0f, 45.0f);
+			}
 		}
 
 		view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-		projection = glm::perspective(glm::radians(45.0f), window.GetAspect(), near, far);
+		projection = glm::perspective(glm::radians(fovy), window.GetAspect(), near, far);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

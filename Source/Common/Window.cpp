@@ -9,12 +9,14 @@
 struct Window::Internal
 {
 	bool firstCursorPos = true;
+
 	Input input;
 };
 
 static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+static void ScrollCallback(GLFWwindow* window, double xOffset, double yOffset);
 
 Window::Window(int width, int height, const char* title) : internal(new Internal())
 {
@@ -42,6 +44,7 @@ Window::Window(int width, int height, const char* title) : internal(new Internal
 	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 	glfwSetKeyCallback(window, KeyCallback);
 	glfwSetCursorPosCallback(window, CursorPosCallback);
+	glfwSetScrollCallback(window, ScrollCallback);
 }
 
 Window::~Window()
@@ -156,6 +159,11 @@ glm::vec2 Window::GetCursorMovement()
 	return internal->input.cursorDelta;
 }
 
+glm::vec2 Window::GetScrollMovement()
+{
+	return internal->input.scrollDelta;
+}
+
 static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -201,4 +209,11 @@ static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
 		internal.input.cursorPosition = glm::vec2(xpos, ypos);
 		internal.input.cursorDelta = internal.input.cursorPosition - prevPosition;
 	}
+}
+
+static void ScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
+{
+	Window::Internal& internal = *static_cast<Window::Internal*>(glfwGetWindowUserPointer(window));
+
+	internal.input.scrollDelta = {xOffset, yOffset};
 }

@@ -37,6 +37,8 @@ public:
 
 	glm::vec2 GetCursorMovement();
 
+	glm::vec2 GetScrollMovement();
+
 private:
 	GLFWwindow* window;
 };

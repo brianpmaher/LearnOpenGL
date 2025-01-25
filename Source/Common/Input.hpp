@@ -23,6 +23,8 @@ struct Input
 	glm::vec2 cursorPosition;
 	glm::vec2 cursorDelta;
 
+	glm::vec2 scrollDelta;
+
 	Status keyEscape;
 	Status keyW;
 	Status keyA;
@@ -32,6 +34,8 @@ struct Input
 	inline void Reset()
 	{
 		cursorDelta = {0.0f, 0.0f};
+
+		scrollDelta = {0.0f, 0.0f};
 
 		keyEscape = Status::None;
 		keyW = Status::None;
