@@ -1,35 +1,35 @@
 #pragma once
 
+#include "Input.hpp"
+
 #include <GLFW/glfw3.h>
 
 class Window
 {
 public:
+	struct Internal;
+
+	Internal* internal;
+
 	Window(int width, int height, const char* title);
 
 	~Window();
 
-	inline bool ShouldClose() const
-	{
-		return glfwWindowShouldClose(window);
-	}
+	bool ShouldClose() const;
 
-	inline void PollEvents() const
-	{
-		glfwPollEvents();
-	}
+	void Close();
 
-	inline void SwapBuffers() const
-	{
-		glfwSwapBuffers(window);
-	}
+	void PollEvents();
 
-	inline float GetAspect() const
-	{
-		int width, height;
-		glfwGetWindowSize(window, &width, &height);
-		return (float)width / (float)height;
-	}
+	void SwapBuffers();
+
+	float GetAspect() const;
+
+	bool IsKeyDown(Input::Key key);
+
+	bool IsKeyPressed(Input::Key key);
+
+	bool IsKeyReleased(Input::Key key);
 
 private:
 	GLFWwindow* window;
