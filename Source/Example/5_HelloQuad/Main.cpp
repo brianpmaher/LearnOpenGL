@@ -3,7 +3,13 @@
 
 #include <iostream>
 
+struct AppState
+{
+	bool wireframeMode;
+};
+
 static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main()
 {
@@ -12,7 +18,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Hello Triangle", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "Hello Quad", nullptr, nullptr);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -27,7 +33,11 @@ int main()
 		return EXIT_FAILURE;
 	}
 
+	auto appState = AppState();
+
+	glfwSetWindowUserPointer(window, &appState);
 	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
+	glfwSetKeyCallback(window, KeyCallback);
 
 	GLuint shaderProgram;
 	{
@@ -103,7 +113,15 @@ int main()
 	}
 
 	GLfloat vertices[] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, -0.5f, 0.0f,
+		0.5f,  0.5f,  0.0f, // top right
+		0.5f,  -0.5f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f, // bottom left
+		-0.5f, 0.5f,  0.0f  // top left
+	};
+	GLuint indices[] = {
+		// note that we start from 0!
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
 	};
 
 	GLuint vao;
@@ -114,6 +132,12 @@ int main()
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
 
@@ -123,20 +147,19 @@ int main()
 	{
 		glfwPollEvents();
 
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		{
-			glfwSetWindowShouldClose(window, true);
-		}
-
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		glPolygonMode(GL_FRONT_AND_BACK, appState.wireframeMode ? GL_LINE : GL_FILL);
 
 		glUseProgram(shaderProgram);
 		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 
 		glfwSwapBuffers(window);
 	}
 
+	glDeleteBuffers(1, &ebo);
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(shaderProgram);
@@ -148,4 +171,18 @@ int main()
 static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+
+static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	AppState& appState = *static_cast<AppState*>(glfwGetWindowUserPointer(window));
+
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, true);
+	}
+	else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		appState.wireframeMode = !appState.wireframeMode;
+	}
 }

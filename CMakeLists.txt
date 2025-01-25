@@ -31,3 +31,8 @@ target_link_libraries(${PROJECT_NAME}_Clear PRIVATE glfw glad)
 add_executable(${PROJECT_NAME}_HelloTriangle ${EXAMPLE_PATH}/4_HelloTriangle/Main.cpp)
 target_compile_definitions(${PROJECT_NAME}_HelloTriangle PRIVATE GLFW_INCLUDE_NONE)
 target_link_libraries(${PROJECT_NAME}_HelloTriangle PRIVATE glfw glad)
+
+# 5. Hello Quad
+add_executable(${PROJECT_NAME}_HelloQuad ${EXAMPLE_PATH}/5_HelloQuad/Main.cpp)
+target_compile_definitions(${PROJECT_NAME}_HelloQuad PRIVATE GLFW_INCLUDE_NONE)
+target_link_libraries(${PROJECT_NAME}_HelloQuad PRIVATE glfw glad)

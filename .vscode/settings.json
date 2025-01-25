@@ -9,8 +9,11 @@
     },
     "cSpell.words": [
         "GLFW",
+        "GLSL",
         "Khronos",
-        "OPENGL"
+        "OPENGL",
+        "Programiv",
+        "Shaderiv"
     ],
     "files.associations": {
         "*.h": "c",
