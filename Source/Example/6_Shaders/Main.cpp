@@ -64,13 +64,6 @@ int main()
 
 		glBindVertexArray(vao);
 
-		// Update green color with time and sine function
-		{
-			float time = glfwGetTime();
-			float green = (sinf(time) / 2.0f) + 0.5f;
-			shader.SetUniform("uColor", 0.0f, green, 0.0f, 0.0f);
-		}
-
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(GL_NONE);
