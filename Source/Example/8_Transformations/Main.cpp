@@ -4,6 +4,8 @@
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 
@@ -20,18 +22,18 @@ int main()
 
 	auto awesomeFaceTexture = Texture(WORKING_DIR "/AwesomeFace.png", GL_RGBA, true);
 
-	float vertices[] = {
-		// positions        // colors         // texture coords
-		0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
-		0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-		-0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
+	GLfloat vertices[] = {
+		// positions        // texture coords
+		0.5f,  0.5f,  0.0f, 1.0f, 1.0f, // top right
+		0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+		-0.5f, 0.5f,  0.0f, 0.0f, 1.0f  // top left
 	};
 	GLuint indices[] = {
 		0, 1, 3, //
 		1, 2, 3, //
 	};
-	constexpr int stride = 8 * sizeof(GLfloat);
+	constexpr GLint stride = 5 * sizeof(GLfloat);
 
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -48,20 +50,11 @@ int main()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// Position attribute
-	int offset = 0;
-	int index = 0;
+	GLint offset = 0;
+	GLint index = 0;
 	{
-		constexpr int size = 3;
+		constexpr GLint size = 3;
 		glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, (void*)offset);
-		glEnableVertexAttribArray(index);
-		index++;
-		offset += size;
-	}
-
-	// Color attribute
-	{
-		constexpr int size = 3;
-		glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, (void*)(offset * sizeof(GLfloat)));
 		glEnableVertexAttribArray(index);
 		index++;
 		offset += size;
@@ -69,7 +62,7 @@ int main()
 
 	// Texture coords
 	{
-		constexpr int size = 2;
+		constexpr GLint size = 2;
 		glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, (void*)(offset * sizeof(GLfloat)));
 		glEnableVertexAttribArray(index);
 		index++;
@@ -86,11 +79,18 @@ int main()
 	{
 		window.PollEvents();
 
+		auto time = (float)glfwGetTime();
+		auto transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(sinf(time) * 0.5, cosf(time) * 0.5, 0.0f));
+		transform = glm::rotate(transform, time, glm::vec3(0.0f, 0.0f, 1.0f));
+		transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.Use();
 		containerTexture.Bind(GL_TEXTURE0);
 		awesomeFaceTexture.Bind(GL_TEXTURE1);
+		shader.SetUniform("uTransform", transform);
 
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

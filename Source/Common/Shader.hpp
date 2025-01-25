@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class Shader
 {
@@ -32,6 +34,11 @@ public:
 	inline void SetUniform(const char* name, GLfloat x, GLfloat y, GLfloat z, GLfloat w) const
 	{
 		glUniform4f(glGetUniformLocation(id, name), x, y, z, w);
+	}
+
+	inline void SetUniform(const char* name, const glm::mat4& matrix) const
+	{
+		glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
 	inline GLuint GetID() const
