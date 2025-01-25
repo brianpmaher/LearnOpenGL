@@ -34,7 +34,7 @@ public:
 		glUniform4f(glGetUniformLocation(id, name), x, y, z, w);
 	}
 
-	inline GLuint GetID()
+	inline GLuint GetID() const
 	{
 		return id;
 	}

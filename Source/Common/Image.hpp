@@ -9,22 +9,22 @@ public:
 
 	~Image();
 
-	inline Uchar* GetData()
+	inline Uchar* GetData() const
 	{
 		return data;
 	}
 
-	inline int GetWidth()
+	inline int GetWidth() const
 	{
 		return width;
 	}
 
-	inline int GetHeight()
+	inline int GetHeight() const
 	{
 		return height;
 	}
 
-	inline int GetNumChannels()
+	inline int GetNumChannels() const
 	{
 		return numChannels;
 	}
