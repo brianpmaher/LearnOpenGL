@@ -10,6 +10,8 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 
 Window::Window(int width, int height, const char* title)
 {
+	std::cout << "Creating window: (" << width << ", " << height << ", \"" << title << "\")" << std::endl;
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -35,6 +37,8 @@ Window::Window(int width, int height, const char* title)
 
 Window::~Window()
 {
+	std::cout << "Closing window" << std::endl;
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }

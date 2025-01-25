@@ -7,6 +7,8 @@
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
+	std::cout << "Loading shader: (\"" << vertexPath << "\", \"" << fragmentPath << "\")" << std::endl;
+
 	std::string vertexCode;
 	std::string fragmentCode;
 
@@ -85,9 +87,13 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
 	}
+
+	std::cout << "Compiled and linked program: " << id << std::endl;
 }
 
 Shader::~Shader()
 {
+	std::cout << "Deleting program: " << id << std::endl;
+
 	glDeleteProgram(id);
 }

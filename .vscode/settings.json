@@ -13,8 +13,10 @@
         "Integerv",
         "Khronos",
         "OPENGL",
+        "Parameteri",
         "Programiv",
-        "Shaderiv"
+        "Shaderiv",
+        "stbi"
     ],
     "files.associations": {
         "*.h": "c",
