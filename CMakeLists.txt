@@ -36,3 +36,8 @@ target_link_libraries(${PROJECT_NAME}_HelloTriangle PRIVATE glfw glad)
 add_executable(${PROJECT_NAME}_HelloQuad ${EXAMPLE_PATH}/5_HelloQuad/Main.cpp)
 target_compile_definitions(${PROJECT_NAME}_HelloQuad PRIVATE GLFW_INCLUDE_NONE)
 target_link_libraries(${PROJECT_NAME}_HelloQuad PRIVATE glfw glad)
+
+# 6. Shaders
+add_executable(${PROJECT_NAME}_Shaders ${EXAMPLE_PATH}/6_Shaders/Main.cpp)
+target_compile_definitions(${PROJECT_NAME}_Shaders PRIVATE GLFW_INCLUDE_NONE)
+target_link_libraries(${PROJECT_NAME}_Shaders PRIVATE glfw glad)
