@@ -1,17 +1,20 @@
 #include "Window.hpp"
 
 #include <glad/glad.h>
+#include <glm/vec2.hpp>
 
 #include <exception>
 #include <iostream>
 
 struct Window::Internal
 {
+	bool firstCursorPos = true;
 	Input input;
 };
 
 static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 
 Window::Window(int width, int height, const char* title) : internal(new Internal())
 {
@@ -38,6 +41,7 @@ Window::Window(int width, int height, const char* title) : internal(new Internal
 	glfwSetWindowUserPointer(window, internal);
 	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 	glfwSetKeyCallback(window, KeyCallback);
+	glfwSetCursorPosCallback(window, CursorPosCallback);
 }
 
 Window::~Window()
@@ -63,7 +67,7 @@ void Window::Close()
 
 void Window::PollEvents()
 {
-	internal->input = Input();
+	internal->input.Reset();
 
 	glfwPollEvents();
 }
@@ -104,15 +108,15 @@ bool Window::IsKeyPressed(Input::Key key)
 	switch (key)
 	{
 	case Input::Key::Escape:
-		return internal->input.KeyEscape == Input::Status::Press;
+		return internal->input.keyEscape == Input::Status::Press;
 	case Input::Key::W:
-		return internal->input.KeyW == Input::Status::Press;
+		return internal->input.keyW == Input::Status::Press;
 	case Input::Key::A:
-		return internal->input.KeyA == Input::Status::Press;
+		return internal->input.keyA == Input::Status::Press;
 	case Input::Key::S:
-		return internal->input.KeyS == Input::Status::Press;
+		return internal->input.keyS == Input::Status::Press;
 	case Input::Key::D:
-		return internal->input.KeyD == Input::Status::Press;
+		return internal->input.keyD == Input::Status::Press;
 	default:
 		return false;
 	}
@@ -123,18 +127,33 @@ bool Window::IsKeyReleased(Input::Key key)
 	switch (key)
 	{
 	case Input::Key::Escape:
-		return internal->input.KeyEscape == Input::Status::Release;
+		return internal->input.keyEscape == Input::Status::Release;
 	case Input::Key::W:
-		return internal->input.KeyW == Input::Status::Release;
+		return internal->input.keyW == Input::Status::Release;
 	case Input::Key::A:
-		return internal->input.KeyA == Input::Status::Release;
+		return internal->input.keyA == Input::Status::Release;
 	case Input::Key::S:
-		return internal->input.KeyS == Input::Status::Release;
+		return internal->input.keyS == Input::Status::Release;
 	case Input::Key::D:
-		return internal->input.KeyD == Input::Status::Release;
+		return internal->input.keyD == Input::Status::Release;
 	default:
 		return false;
 	}
+}
+
+void Window::LockCursor()
+{
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::UnlockCursor()
+{
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+glm::vec2 Window::GetCursorMovement()
+{
+	return internal->input.cursorDelta;
 }
 
 static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
@@ -149,19 +168,37 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 	switch (key)
 	{
 	case GLFW_KEY_ESCAPE:
-		internal.input.KeyEscape = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
+		internal.input.keyEscape = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
 		break;
 	case GLFW_KEY_W:
-		internal.input.KeyW = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
+		internal.input.keyW = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
 		break;
 	case GLFW_KEY_A:
-		internal.input.KeyA = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
+		internal.input.keyA = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
 		break;
 	case GLFW_KEY_S:
-		internal.input.KeyS = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
+		internal.input.keyS = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
 		break;
 	case GLFW_KEY_D:
-		internal.input.KeyD = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
+		internal.input.keyD = action == GLFW_PRESS ? Input::Status::Press : Input::Status::Release;
 		break;
+	}
+}
+
+static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	Window::Internal& internal = *static_cast<Window::Internal*>(glfwGetWindowUserPointer(window));
+
+	if (internal.firstCursorPos)
+	{
+		internal.input.cursorPosition = glm::vec2(xpos, ypos);
+		internal.input.cursorDelta = glm::vec2(0.0f);
+		internal.firstCursorPos = false;
+	}
+	else
+	{
+		auto prevPosition = internal.input.cursorPosition;
+		internal.input.cursorPosition = glm::vec2(xpos, ypos);
+		internal.input.cursorDelta = internal.input.cursorPosition - prevPosition;
 	}
 }

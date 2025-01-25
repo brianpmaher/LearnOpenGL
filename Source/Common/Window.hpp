@@ -31,6 +31,12 @@ public:
 
 	bool IsKeyReleased(Input::Key key);
 
+	void LockCursor();
+
+	void UnlockCursor();
+
+	glm::vec2 GetCursorMovement();
+
 private:
 	GLFWwindow* window;
 };

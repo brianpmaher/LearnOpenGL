@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/vec2.hpp>
+
 struct Input
 {
 	enum class Key
@@ -18,9 +20,23 @@ struct Input
 		Release,
 	};
 
-	Status KeyEscape;
-	Status KeyW;
-	Status KeyA;
-	Status KeyS;
-	Status KeyD;
+	glm::vec2 cursorPosition;
+	glm::vec2 cursorDelta;
+
+	Status keyEscape;
+	Status keyW;
+	Status keyA;
+	Status keyS;
+	Status keyD;
+
+	inline void Reset()
+	{
+		cursorDelta = {0.0f, 0.0f};
+
+		keyEscape = Status::None;
+		keyW = Status::None;
+		keyA = Status::None;
+		keyS = Status::None;
+		keyD = Status::None;
+	}
 };

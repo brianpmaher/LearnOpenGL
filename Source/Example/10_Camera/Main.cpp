@@ -16,6 +16,8 @@ int main()
 {
 	auto window = Window(800, 600, TITLE);
 
+	window.LockCursor();
+
 	auto shader = Shader(WORKING_DIR "/Vertex.glsl", WORKING_DIR "/Fragment.glsl");
 
 	auto containerTexture = Texture(WORKING_DIR "/Container.jpg");
@@ -102,16 +104,16 @@ int main()
 
 	auto cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
 	auto cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	float yaw = -90.0f;
+	float pitch = 0.0f;
 	auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	auto cameraRight = glm::cross(cameraFront, cameraUp);
 	auto view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 
 	auto projection = glm::mat4(1.0f);
-	{
-		constexpr float near = 0.1f;
-		constexpr float far = 100.0f;
-		projection = glm::perspective(glm::radians(45.0f), window.GetAspect(), near, far);
-	}
+	constexpr float near = 0.1f;
+	constexpr float far = 100.0f;
+	projection = glm::perspective(glm::radians(45.0f), window.GetAspect(), near, far);
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -150,40 +152,65 @@ int main()
 
 		// Update camera movement
 		{
-			auto moveDirection = glm::vec3(0.0f);
-
-			// Forward
-			if (window.IsKeyDown(Input::Key::W))
+			// Update keyboard movement
 			{
-				moveDirection = cameraFront;
+				auto moveDirection = glm::vec3(0.0f);
+
+				// Forward
+				if (window.IsKeyDown(Input::Key::W))
+				{
+					moveDirection = cameraFront;
+				}
+
+				// Left
+				if (window.IsKeyDown(Input::Key::A))
+				{
+					moveDirection -= cameraRight;
+				}
+
+				// Backward
+				if (window.IsKeyDown(Input::Key::S))
+				{
+					moveDirection -= cameraFront;
+				}
+
+				// Right
+				if (window.IsKeyDown(Input::Key::D))
+				{
+					moveDirection += cameraRight;
+				}
+
+				if (glm::length(moveDirection) > 0.0f)
+				{
+					constexpr float moveSpeed = 2.0f;
+					cameraPosition += glm::normalize(moveDirection) * moveSpeed * deltaTime;
+				}
 			}
 
-			// Left
-			if (window.IsKeyDown(Input::Key::A))
+			// Update mouse rotation
 			{
-				moveDirection -= cameraRight;
-			}
+				glm::vec2 cursorMovement = window.GetCursorMovement();
+				constexpr float sensitivity = 0.1f;
+				glm::vec2 deltaMovement = cursorMovement * sensitivity;
 
-			// Backward
-			if (window.IsKeyDown(Input::Key::S))
-			{
-				moveDirection -= cameraFront;
-			}
+				yaw += deltaMovement.x;
+				pitch -= deltaMovement.y;
 
-			// Right
-			if (window.IsKeyDown(Input::Key::D))
-			{
-				moveDirection += cameraRight;
-			}
+				pitch = glm::clamp(pitch, -89.0f, 89.0f);
 
-			if (glm::length(moveDirection) > 0.0f)
-			{
-				constexpr float moveSpeed = 2.0f;
-				cameraPosition += glm::normalize(moveDirection) * moveSpeed * deltaTime;
+				glm::vec3 direction;
+				auto yawRad = glm::radians(yaw);
+				auto pitchRad = glm::radians(pitch);
+				direction.x = cos(yawRad) * cos(pitchRad);
+				direction.y = sin(pitchRad);
+				direction.z = sin(yawRad) * cos(pitchRad);
+				cameraFront = glm::normalize(direction);
+				cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
 			}
 		}
 
 		view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+		projection = glm::perspective(glm::radians(45.0f), window.GetAspect(), near, far);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
