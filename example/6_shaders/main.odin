@@ -12,9 +12,6 @@ import la "core:math/linalg"
 
 TITLE :: "Shaders"
 
-GL_VERISON_MAJOR :: 3
-GL_VERISON_MINOR :: 3
-
 Vertex :: struct {
 	position: la.Vector3f32,
 	color:    la.Vector3f32,
