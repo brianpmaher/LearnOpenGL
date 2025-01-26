@@ -24,14 +24,14 @@ This project was developed and tested to work on Windows. It likely doesn't work
 
 ## Screenshots and GIFs
 
-![Clear color wheel](./Asset/ClearColorWheel.gif)
+![Clear color wheel](./docs/clear_color_wheel.gif)
 
-![Shader triangle](./Asset/ShaderTriangle.png)
+![Shader triangle](./docs/shader_triangle.png)
 
-![Textures](./Asset/Textures.gif)
+![Textures](./docs/textures.gif)
 
-![Transform wheel](./Asset/TransformWheel.gif)
+![Transform wheel](./docs/transform_wheel.gif)
 
-![Camera movement](./Asset/CameraMovement.gif)
+![Camera movement](./docs/camera_movement.gif)
 
-![Light color](./Asset/LightColor.gif)
+![Light color](./docs/light_color.gif)

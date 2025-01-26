@@ -47,8 +47,6 @@ main :: proc() {
 			gl.Clear(gl.COLOR_BUFFER_BIT)
 		}
 
-		gl.Clear(gl.COLOR_BUFFER_BIT)
-
 		glfw.SwapBuffers(window)
 	}
 }

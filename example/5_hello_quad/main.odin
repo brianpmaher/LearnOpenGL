@@ -8,13 +8,19 @@ import "core:fmt"
 import "core:math"
 import la "core:math/linalg"
 
-TITLE :: "Hello Triangle"
+TITLE :: "Hello Quad"
 
 GL_VERISON_MAJOR :: 3
 GL_VERISON_MINOR :: 3
 
 Vertex :: struct {
 	position: la.Vector3f32,
+}
+
+Triangle_Indices :: [3]u32
+
+Window_User_State :: struct {
+	wireframe_mode: bool,
 }
 
 main :: proc() {
@@ -33,7 +39,10 @@ main :: proc() {
 
 	gl.load_up_to(GL_VERISON_MAJOR, GL_VERISON_MINOR, glfw.gl_set_proc_address)
 
+	state := Window_User_State{}
 	glfw.SetFramebufferSizeCallback(window, framebuffer_size_callback)
+	glfw.SetKeyCallback(window, key_callback)
+	glfw.SetWindowUserPointer(window, &state)
 
 	shader_program := gl.CreateProgram()
 	defer gl.DeleteProgram(shader_program)
@@ -87,14 +96,22 @@ main :: proc() {
 		}
 	}
 
-	vertices := [?]Vertex{{{-0.5, -0.5, 0.0}}, {{0.0, 0.5, 0.0}}, {{0.5, -0.5, 0.0}}}
+	vertices := [?]Vertex {
+		{{0.5, 0.5, 0.0}},
+		{{0.5, -0.5, 0.0}},
+		{{-0.5, -0.5, 0.0}},
+		{{-0.5, 0.5, 0.0}},
+	}
+	indices := [?]Triangle_Indices{{0, 1, 3}, {1, 2, 3}}
 
 	vao: u32
 	gl.GenVertexArrays(1, &vao)
+	defer gl.DeleteVertexArrays(1, &vao)
 	gl.BindVertexArray(vao)
 
 	vbo: u32
 	gl.GenBuffers(1, &vbo)
+	defer gl.DeleteBuffers(1, &vbo)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, size_of(vertices), &vertices, gl.STATIC_DRAW)
 	offset: u32 = 0
@@ -109,6 +126,12 @@ main :: proc() {
 	gl.EnableVertexAttribArray(offset)
 	offset += 1
 
+	ebo: u32
+	gl.GenBuffers(1, &ebo)
+	defer gl.DeleteBuffers(1, &ebo)
+	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
+	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, size_of(indices), &indices, gl.STATIC_DRAW)
+
 	gl.ClearColor(0.2, 0.3, 0.3, 1.0)
 
 	for !glfw.WindowShouldClose(window) {
@@ -122,9 +145,16 @@ main :: proc() {
 
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
+		gl.PolygonMode(gl.FRONT_AND_BACK, state.wireframe_mode ? gl.LINE : gl.FILL)
+
 		gl.UseProgram(shader_program)
 		gl.BindVertexArray(vao)
-		gl.DrawArrays(gl.TRIANGLES, 0, len(vertices))
+		gl.DrawElements(
+			gl.TRIANGLES,
+			len(indices) * len(indices[0]),
+			gl.UNSIGNED_INT,
+			rawptr(uintptr(0)),
+		)
 
 		glfw.SwapBuffers(window)
 	}
@@ -132,4 +162,14 @@ main :: proc() {
 
 framebuffer_size_callback :: proc "c" (window: glfw.WindowHandle, width, height: c.int) {
 	gl.Viewport(0, 0, width, height)
+}
+
+key_callback :: proc "c" (window: glfw.WindowHandle, key, scancode, action, mods: c.int) {
+	state := cast(^Window_User_State)glfw.GetWindowUserPointer(window)
+
+	if key == glfw.KEY_ESCAPE && action == glfw.PRESS {
+		glfw.SetWindowShouldClose(window, true)
+	} else if key == glfw.KEY_SPACE && action == glfw.PRESS {
+		state.wireframe_mode = !state.wireframe_mode
+	}
 }
