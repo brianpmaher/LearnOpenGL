@@ -83,3 +83,7 @@ target_link_libraries(${PROJECT_NAME}_Camera PRIVATE ${COMMON_LIB})
 # 11. Colors
 add_executable(${PROJECT_NAME}_Colors ${EXAMPLE_PATH}/11_Colors/Main.cpp)
 target_link_libraries(${PROJECT_NAME}_Colors PRIVATE ${COMMON_LIB})
+
+# 12. Basic Lighting
+add_executable(${PROJECT_NAME}_BasicLighting ${EXAMPLE_PATH}/12_BasicLighting/Main.cpp)
+target_link_libraries(${PROJECT_NAME}_BasicLighting PRIVATE ${COMMON_LIB})
