@@ -7,7 +7,7 @@ import "core:c"
 import "core:fmt"
 import "core:math"
 
-TITLE :: "Clear"
+TITLE :: "Hello Triangle"
 
 GL_VERISON_MAJOR :: 3
 GL_VERISON_MINOR :: 3
@@ -29,6 +29,23 @@ main :: proc() {
 	gl.load_up_to(GL_VERISON_MAJOR, GL_VERISON_MINOR, glfw.gl_set_proc_address)
 
 	glfw.SetFramebufferSizeCallback(window, framebuffer_size_callback)
+
+	shader_program := gl.CreateProgram()
+	defer gl.DeleteProgram(shader_program)
+	{
+		vertex_source: cstring = #load("./vert.glsl")
+		vertex_shader := gl.CreateShader(gl.VERTEX_SHADER)
+		gl.ShaderSource(vertex_shader, 1, &vertex_source, nil)
+		gl.CompileShader(vertex_shader)
+		success: i32
+		gl.GetShaderiv(vertex_shader, gl.COMPILE_STATUS, &success)
+		if !bool(success) {
+			LOG_SIZE :: 512
+			info_log: [LOG_SIZE]c.char
+			gl.GetShaderInfoLog(vertex_shader, LOG_SIZE, nil, raw_data(info_log[:]))
+			// TODO: Here, need to alloc string or something
+		}
+	}
 
 	for !glfw.WindowShouldClose(window) {
 		glfw.PollEvents()
