@@ -4,10 +4,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(const Window& window, glm::vec3 position)
+Camera::Camera(const Window& window, glm::vec3 position, float pitch)
 	: window(window)
 	, yaw(-90.0f)
-	, pitch(0.0f)
+	, pitch(pitch)
 	, near(0.1f)
 	, far(100.0f)
 	, fovy(45.0f)

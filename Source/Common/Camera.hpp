@@ -8,7 +8,7 @@ class Window;
 class Camera
 {
 public:
-	Camera(const Window& window, glm::vec3 position = {0.0f, 0.0f, 0.0f});
+	Camera(const Window& window, glm::vec3 position = {0.0f, 0.0f, 0.0f}, float pitch = 0.0f);
 
 	~Camera();
 

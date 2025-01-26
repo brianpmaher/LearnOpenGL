@@ -79,3 +79,7 @@ target_link_libraries(${PROJECT_NAME}_CoordinateSystems PRIVATE ${COMMON_LIB})
 # 10. Camera
 add_executable(${PROJECT_NAME}_Camera ${EXAMPLE_PATH}/10_Camera/Main.cpp)
 target_link_libraries(${PROJECT_NAME}_Camera PRIVATE ${COMMON_LIB})
+
+# 11. Colors
+add_executable(${PROJECT_NAME}_Colors ${EXAMPLE_PATH}/11_Colors/Main.cpp)
+target_link_libraries(${PROJECT_NAME}_Colors PRIVATE ${COMMON_LIB})
