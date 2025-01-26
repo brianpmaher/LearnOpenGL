@@ -21,3 +21,17 @@ This project has a few requirements that are up to you to source:
 Each example is a separate application. See [CmakeLists.txt](./CMakeLists.txt) for a list of example applications.
 
 This project was developed and tested to work on Windows. It likely doesn't work on other platforms without some additional work.
+
+## Screenshots and GIFs
+
+![Clear color wheel](./Asset/ClearColorWheel.gif)
+
+![Shader triangle](./Asset/ShaderTriangle.png)
+
+![Textures](./Asset/Textures.gif)
+
+![Transform wheel](./Asset/TransformWheel.gif)
+
+![Camera movement](./Asset/CameraMovement.gif)
+
+![Light color](./Asset/LightColor.gif)
