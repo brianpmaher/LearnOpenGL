@@ -1,9 +1,0 @@
-BasedOnStyle: Microsoft
-UseTab: AlignWithSpaces
-IndentWidth: 4
-AccessModifierOffset: -4
-PointerAlignment: Left
-AlignAfterOpenBracket: AlwaysBreak
-AlwaysBreakBeforeMultilineStrings: true
-AlignArrayOfStructures: Right
-BreakConstructorInitializers: BeforeComma

@@ -1,6 +1,5 @@
 {
     "cmake.buildDirectory": "${workspaceFolder}/Build",
-    "editor.formatOnSave": true,
     "markdownlint.config": {
         "no-inline-html": false
     },
