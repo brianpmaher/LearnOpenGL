@@ -10,7 +10,7 @@ import "core:fmt"
 import "core:math"
 import la "core:math/linalg"
 
-TITLE :: "Hello Quad"
+TITLE :: "Shaders"
 
 GL_VERISON_MAJOR :: 3
 GL_VERISON_MINOR :: 3
