@@ -25,19 +25,19 @@ public:
 
 	float GetAspect() const;
 
-	bool IsKeyDown(Input::Key key);
+	bool IsKeyDown(Input::Key key) const;
 
-	bool IsKeyPressed(Input::Key key);
+	bool IsKeyPressed(Input::Key key) const;
 
-	bool IsKeyReleased(Input::Key key);
+	bool IsKeyReleased(Input::Key key) const;
 
 	void LockCursor();
 
 	void UnlockCursor();
 
-	glm::vec2 GetCursorMovement();
+	glm::vec2 GetCursorMovement() const;
 
-	glm::vec2 GetScrollMovement();
+	glm::vec2 GetScrollMovement() const;
 
 private:
 	GLFWwindow* window;

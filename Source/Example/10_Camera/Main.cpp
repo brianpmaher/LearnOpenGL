@@ -1,3 +1,4 @@
+#include "Common/Camera.hpp"
 #include "Common/Shader.hpp"
 #include "Common/Texture.hpp"
 #include "Common/Window.hpp"
@@ -17,6 +18,8 @@ int main()
 	auto window = Window(800, 600, TITLE);
 
 	window.LockCursor();
+
+	auto camera = Camera(window, {0.0f, 0.0f, 3.0f});
 
 	auto shader = Shader(WORKING_DIR "/Vertex.glsl", WORKING_DIR "/Fragment.glsl");
 
@@ -102,20 +105,6 @@ int main()
 	shader.SetUniform("texture0", 0);
 	shader.SetUniform("texture1", 1);
 
-	auto cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
-	auto cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	float yaw = -90.0f;
-	float pitch = 0.0f;
-	auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	auto cameraRight = glm::cross(cameraFront, cameraUp);
-	auto view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-
-	auto projection = glm::mat4(1.0f);
-	constexpr float near = 0.1f;
-	constexpr float far = 100.0f;
-	float fovy = 45.0f;
-	projection = glm::perspective(glm::radians(fovy), window.GetAspect(), near, far);
-
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 	glEnable(GL_DEPTH_TEST);
@@ -137,109 +126,49 @@ int main()
 
 	while (!window.ShouldClose())
 	{
-		float deltaTime;
+		// Update
 		{
-			float time = glfwGetTime();
-			deltaTime = time - prevTime;
-			prevTime = time;
-		}
+			window.PollEvents();
 
-		window.PollEvents();
-
-		if (window.IsKeyPressed(Input::Key::Escape))
-		{
-			window.Close();
-		}
-
-		// Update camera movement
-		{
-			// Update keyboard movement
+			float deltaTime;
 			{
-				auto moveDirection = glm::vec3(0.0f);
-
-				// Forward
-				if (window.IsKeyDown(Input::Key::W))
-				{
-					moveDirection = cameraFront;
-				}
-
-				// Left
-				if (window.IsKeyDown(Input::Key::A))
-				{
-					moveDirection -= cameraRight;
-				}
-
-				// Backward
-				if (window.IsKeyDown(Input::Key::S))
-				{
-					moveDirection -= cameraFront;
-				}
-
-				// Right
-				if (window.IsKeyDown(Input::Key::D))
-				{
-					moveDirection += cameraRight;
-				}
-
-				if (glm::length(moveDirection) > 0.0f)
-				{
-					constexpr float moveSpeed = 5.0f;
-					cameraPosition += glm::normalize(moveDirection) * moveSpeed * deltaTime;
-				}
+				float time = glfwGetTime();
+				deltaTime = time - prevTime;
+				prevTime = time;
 			}
 
-			// Update mouse rotation
+			if (window.IsKeyPressed(Input::Key::Escape))
 			{
-				glm::vec2 cursorMovement = window.GetCursorMovement();
-				constexpr float sensitivity = 0.1f;
-				glm::vec2 deltaMovement = cursorMovement * sensitivity;
-
-				yaw += deltaMovement.x;
-				pitch -= deltaMovement.y;
-
-				pitch = glm::clamp(pitch, -89.0f, 89.0f);
-
-				glm::vec3 direction;
-				auto yawRad = glm::radians(yaw);
-				auto pitchRad = glm::radians(pitch);
-				direction.x = cos(yawRad) * cos(pitchRad);
-				direction.y = sin(pitchRad);
-				direction.z = sin(yawRad) * cos(pitchRad);
-				cameraFront = glm::normalize(direction);
-				cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
+				window.Close();
 			}
 
-			// Update scroll zoom
-			{
-				fovy -= window.GetScrollMovement().y;
-				fovy = glm::clamp(fovy, 5.0f, 45.0f);
-			}
+			camera.Update(deltaTime);
 		}
 
-		view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-		projection = glm::perspective(glm::radians(fovy), window.GetAspect(), near, far);
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		shader.Use();
-		containerTexture.Bind(GL_TEXTURE0);
-		awesomeFaceTexture.Bind(GL_TEXTURE1);
-		shader.SetUniform("view", view);
-		shader.SetUniform("projection", projection);
-
-		glBindVertexArray(vao);
-		for (int i = 0; i < 10; i++)
+		// Render
 		{
-			auto model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			shader.SetUniform("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		glBindVertexArray(GL_NONE);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		window.SwapBuffers();
+			shader.Use();
+			containerTexture.Bind(GL_TEXTURE0);
+			awesomeFaceTexture.Bind(GL_TEXTURE1);
+			shader.SetUniform("view", camera.GetView());
+			shader.SetUniform("projection", camera.GetProjection());
+
+			glBindVertexArray(vao);
+			for (int i = 0; i < 10; i++)
+			{
+				auto model = glm::mat4(1.0f);
+				model = glm::translate(model, cubePositions[i]);
+				float angle = 20.0f * i;
+				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				shader.SetUniform("model", model);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+			glBindVertexArray(GL_NONE);
+
+			window.SwapBuffers();
+		}
 	}
 
 	glDeleteBuffers(1, &vbo);

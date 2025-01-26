@@ -18,7 +18,8 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 static void ScrollCallback(GLFWwindow* window, double xOffset, double yOffset);
 
-Window::Window(int width, int height, const char* title) : internal(new Internal())
+Window::Window(int width, int height, const char* title)
+	: internal(new Internal())
 {
 	std::cout << "Creating window: (" << width << ", " << height << ", \"" << title << "\")" << std::endl;
 
@@ -87,7 +88,7 @@ float Window::GetAspect() const
 	return (float)width / (float)height;
 }
 
-bool Window::IsKeyDown(Input::Key key)
+bool Window::IsKeyDown(Input::Key key) const
 {
 	switch (key)
 	{
@@ -106,7 +107,7 @@ bool Window::IsKeyDown(Input::Key key)
 	}
 }
 
-bool Window::IsKeyPressed(Input::Key key)
+bool Window::IsKeyPressed(Input::Key key) const
 {
 	switch (key)
 	{
@@ -125,7 +126,7 @@ bool Window::IsKeyPressed(Input::Key key)
 	}
 }
 
-bool Window::IsKeyReleased(Input::Key key)
+bool Window::IsKeyReleased(Input::Key key) const
 {
 	switch (key)
 	{
@@ -154,12 +155,12 @@ void Window::UnlockCursor()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-glm::vec2 Window::GetCursorMovement()
+glm::vec2 Window::GetCursorMovement() const
 {
 	return internal->input.cursorDelta;
 }
 
-glm::vec2 Window::GetScrollMovement()
+glm::vec2 Window::GetScrollMovement() const
 {
 	return internal->input.scrollDelta;
 }

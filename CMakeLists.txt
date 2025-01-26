@@ -22,7 +22,13 @@ add_subdirectory(Dependency/glm-1.0.1-light/glm)
 # Common library
 #
 
-add_library(${COMMON_LIB} ${COMMON_PATH}/Image.cpp ${COMMON_PATH}/Shader.cpp ${COMMON_PATH}/Texture.cpp ${COMMON_PATH}/Window.cpp)
+add_library(${COMMON_LIB}
+	${COMMON_PATH}/Camera.cpp
+	${COMMON_PATH}/Image.cpp
+	${COMMON_PATH}/Shader.cpp
+	${COMMON_PATH}/Texture.cpp
+	${COMMON_PATH}/Window.cpp
+)
 target_include_directories(${COMMON_LIB} PUBLIC ${SOURCE_PATH} Dependency/glm-1.0.1-light)
 target_compile_definitions(${COMMON_LIB} PUBLIC GLFW_INCLUDE_NONE)
 target_link_libraries(${COMMON_LIB} PUBLIC glfw glad stb glm::glm)

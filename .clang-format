@@ -6,3 +6,4 @@ PointerAlignment: Left
 AlignAfterOpenBracket: AlwaysBreak
 AlwaysBreakBeforeMultilineStrings: true
 AlignArrayOfStructures: Right
+BreakConstructorInitializers: BeforeComma
